@@ -1,0 +1,29 @@
+# Patient data and everything derived from it. Nothing below may be committed.
+data/
+work/
+results/
+*.dcm
+*.zip
+*.nii
+*.nii.gz
+*.npy
+*.mrk.json
+*.csv
+*.xlsx
+*.log
+*.pt
+*.pth
+QA_Plots/
+Expert_QC_Sheets/
+
+# Figures usually show patient images. Add one deliberately with `git add -f` after checking it.
+*.png
+*.jpg
+*.pdf
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/

@@ -1,0 +1,84 @@
+# Training and evaluation settings. Where an option has alternatives, they are listed after it.
+
+paths:
+  labels_csv: ../data/labels.csv        # columns: Scan_ID, DDx, Sex, Age, Laterality (see README)
+  crops_dir: ../data/crops/64mm         # crop.py output: <Scan_ID>_<sequence>.npy, (11, 224, 224)
+  work_dir: ../work                     # fold checkpoints
+  results_dir: ../results               # splits, metrics, OOF predictions, figures, logs
+
+seed: 42
+device: auto                            # auto | cuda | cpu
+
+# Smoke test: a stratified subsample of the CV pool and the settings below.
+fast_run: false
+fast_run_settings:
+  n_per_class: 8
+  n_splits: 2
+  epochs: 2
+  n_bootstraps: 200
+  num_workers: 0
+  batch_size: {1: 8, 2: 4, 3: 8, 4: 4}
+
+tasks: [binary, multiclass]             # binary: malignant vs benign; multiclass: benign subtypes
+sequences: [T1, T2, T1c, B0, DWI, ADC]
+
+data:
+  test_fraction: 0.15
+  num_slices: 5                         # central slices used by the multi-slice models
+  imagenet_norm: false                  # ImageNet mean/std on the replicated grey channels
+  num_workers: 4
+
+cv:
+  n_splits: 5
+  epochs: 30                            # same budget for every step
+  epoch_selection: outer_val            # outer_val | swa | last | inner (see engine.run_experiment)
+  swa_last_n: 3
+  inner_val_fraction: 0.2
+  min_inner_val_per_class: 3
+  threshold_source: pooled_oof          # pooled_oof | train_fold | inner
+  monitor_val_curve: true               # log validation loss/AUC per epoch (not used for selection)
+  n_bootstraps: 2000
+
+# Keyed by step: 1 single slice, 2 multi-slice MIL, 3 fusion, 4 combined.
+training:
+  batch_size: {1: 64, 2: 16, 3: 32, 4: 12}
+  accum_steps: {1: 1, 2: 4, 3: 1, 4: 4}
+  lr: {1: 1.0e-4, 2: 1.0e-4, 3: 1.0e-4, 4: 5.0e-5}
+  weight_decay: 1.0e-2
+  focal_gamma: {binary: 2.0, multiclass: 0.0}
+  use_amp: false                        # fp16 gave NaN AUCs with the focal loss; bf16 is the safer option
+  allow_tf32: true                      # TF32 on Ampere or newer GPUs; no effect on older GPUs
+  augment: {p_flip: 0.5, max_rot: 15.0, max_trans: 0.1}
+
+model:
+  freeze_depth: layer4                  # layer4 | layer3 | none: which ResNet blocks are trained
+  bn_mode: selective                    # selective | frozen | unfrozen
+  use_cbam: false                       # ablation: CBAM increased overfitting
+  mil_hidden_dim: 64
+  seq_attn_hidden_dim: 32
+  clinical_embed_dim: 16
+  warm_start: true                      # encoder from the previous step
+  warm_start_mil: true                  # step-4 slice attention from step 2
+  warm_start_seq_attn: true             # step-4 sequence attention from step 3
+
+selection:
+  fusion_combo_size: 3
+  n_fusion_configs: 2                   # sequence sets tested at step 3
+  n_stage4_configs: 2                   # sequence sets carried into step 4
+  run_joint_attention: true
+
+extended:                               # train.py --steps extended
+  combo_sizes: [2, 3]
+  max_combos: 10
+
+repeat_cv:                              # train.py --steps repeat-cv
+  seeds: [123, 7, 2024, 99]
+
+evaluation:
+  binary_decision: vote                 # vote | mean_prob
+  adc_scaler: per_fold                  # per_fold | pooled
+  point_estimate: full_sample           # full_sample | bootstrap_mean
+  show_ci: true
+  n_bootstraps: 2000
+  batch_size: 8
+  gallery_errors: 2                     # misclassified cases per task in the Grad-CAM gallery

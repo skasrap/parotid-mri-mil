@@ -1,0 +1,20 @@
+# Python >= 3.10 (tested with 3.13). Versions in comments are the ones the code was tested with.
+# For a GPU, install the CUDA build of torch/torchvision first (https://pytorch.org/get-started/locally/).
+
+# Preprocessing
+SimpleITK==2.5.3        # pinned: registration and N4 results can differ between releases
+nibabel>=5.3            # 5.3.3
+pydicom>=3.0            # 3.0.1
+numpy>=2.2              # 2.2.4 (preprocessing), 2.3.3 (modeling)
+pandas>=2.2             # 2.2.3, 2.3.3
+scipy>=1.15             # 1.15.2, 1.18.1
+matplotlib>=3.10        # 3.10.3, 3.11.1
+
+# Modeling
+torch>=2.5              # 2.7.1+cu118
+torchvision>=0.20       # 0.22.1+cu118
+scikit-learn>=1.6       # 1.9.0
+seaborn>=0.13           # 0.13.2
+PyYAML>=6.0             # 6.0.3
+
+# Ingestion also needs dcm2niix on PATH (https://github.com/rordenlab/dcm2niix), tested with v1.0.20260416.
