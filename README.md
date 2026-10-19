@@ -74,7 +74,14 @@ warm-started from the one before:
 
 The sequence sets for step 3 are picked automatically from how each sequence ranked in steps 1
 and 2, so they were not chosen by hand. Step 4 can also take age, sex and laterality through a
-small clinical encoder. More detail in [modeling/README.md](modeling/README.md).
+small clinical encoder.
+
+The figure below follows one patient through a final step-4 model. The images are a
+de-identified example from the study; the attention weights and probabilities are illustrative.
+
+![Forward pass of the final model for one patient: three co-registered sequences become the three input channels, a shared ResNet-18 encodes each of five slices, gated attention weights the slices, and a linear head gives calibrated class probabilities.](docs/network_forward_pass.svg)
+
+More detail in [modeling/README.md](modeling/README.md).
 
 ## How the models were validated
 
@@ -149,6 +156,7 @@ epochs. It is a quick way to check a new installation.
 ```
 preprocessing/   ingest_dicom.py, preprocess.py, qa.py, crop.py, spacing_report.py
 modeling/        config.yaml, data.py, models.py, metrics.py, engine.py, common.py, train.py, evaluate.py
+docs/            figures
 ```
 
 ## License

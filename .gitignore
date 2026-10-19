@@ -16,10 +16,12 @@ results/
 QA_Plots/
 Expert_QC_Sheets/
 
-# Figures usually show patient images. Add one deliberately with `git add -f` after checking it.
+# Figures usually show patient images. Only docs/ holds figures cleared for publication.
 *.png
 *.jpg
 *.pdf
+*.svg
+!docs/*.svg
 
 # Python
 __pycache__/
