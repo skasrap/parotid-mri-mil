@@ -69,10 +69,11 @@ patient in `QA_Plots/` (mid-slice dashboard with overlays, and a multi-slice str
 `Unified_Pipeline_Audit.csv` with slice counts and registration metrics. Failures do not stop
 the batch; the traceback goes to `preprocess_errors.log`.
 
-Registration samples 15-20% of the voxels at random. `--seed` fixes that sample (default 42).
-With several threads ITK sums the metric in a varying order, so repeated runs agree to rounding
-error but can occasionally converge to a slightly different transform; `--threads 1` gives
-bit-identical runs.
+Registration samples 15-20% of the voxels at random. `--seed` fixes that sample (default 42) and
+costs nothing. With several threads ITK sums the metric in a varying order, so repeated runs
+agree to rounding error but can occasionally converge to a slightly different transform. The
+default is fine for normal use; `--threads 1` gives bit-identical runs but is about five times
+slower per patient. Several single-threaded runs can share a machine (about 1 GB of RAM each).
 
 ## 3. Fiducial
 

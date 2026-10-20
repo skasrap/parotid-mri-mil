@@ -436,7 +436,7 @@ def main():
     p.add_argument("--skip-existing", action="store_true", help="skip patients whose outputs already exist")
     p.add_argument("--no-qa", action="store_true", help="do not write QA figures")
     p.add_argument("--threads", type=int,
-                   help="ITK threads; 1 makes runs bit-reproducible (multithreaded metric sums are not)")
+                   help="ITK threads (default: all); 1 makes runs bit-identical but about 5x slower")
     args = p.parse_args()
 
     if args.threads:

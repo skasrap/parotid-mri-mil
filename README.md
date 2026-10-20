@@ -142,9 +142,11 @@ epochs. It is a quick way to check a new installation.
 ## Reproducibility
 
 - Registration samples voxels at random. `preprocess.py` fixes that sample with `--seed`
-  (default 42). ITK still adds up the metric over several threads in a varying order, so two runs
-  agree to rounding error but a registration can occasionally land slightly differently;
-  `--threads 1` makes runs bit-identical, at the cost of a much longer run time.
+  (default 42), at no extra cost, so repeated runs agree closely. They are not always
+  bit-identical: ITK adds up the registration metric over several threads in a varying order, and
+  now and then a registration settles slightly differently. If you need bit-identical output, add
+  `--threads 1`; on my laptop that took about 11 minutes per patient instead of 2. In practice I
+  preprocess once and keep the volumes and crops as the fixed input for training and evaluation.
 - Each training fold gets its own seed, derived from the experiment, task and fold, which also
   covers the DataLoader workers, and cuDNN runs in deterministic mode. Two runs on the same GPU
   gave bit-identical checkpoints (GTX 1650 Ti, PyTorch 2.7.1, CUDA 11.8). A different GPU model, a
