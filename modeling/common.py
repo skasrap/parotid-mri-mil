@@ -32,7 +32,8 @@ def _to_config(obj):
 
 def load_config(path, fast_run=None) -> Config:
     """Reads the YAML config. Relative paths are taken relative to the config file. With
-    fast_run, the values under `fast_run_settings` replace the regular ones."""
+    fast_run, the values under `fast_run_settings` replace the regular ones and the work and
+    results folders get a `_fast_run` suffix, so a smoke test never mixes with a real run."""
     path = Path(path)
     with open(path, encoding="utf-8") as f:
         raw = yaml.safe_load(f)
@@ -48,6 +49,8 @@ def load_config(path, fast_run=None) -> Config:
         raw["cv"]["n_bootstraps"] = fr["n_bootstraps"]
         raw["training"]["batch_size"] = fr["batch_size"]
         raw["data"]["num_workers"] = fr["num_workers"]
+        for key in ("work_dir", "results_dir"):
+            raw["paths"][key] = raw["paths"][key].rstrip("/\\") + "_fast_run"
     cfg = _to_config(raw)
     for key in ("work_dir", "results_dir"):
         Path(cfg.paths[key]).mkdir(parents=True, exist_ok=True)

@@ -137,7 +137,8 @@ python evaluate.py --config config.yaml
 ```
 
 `python train.py --fast-run` runs the whole chain on a small subsample with two folds and two
-epochs. It is a quick way to check a new installation.
+epochs. It is a quick way to check a new installation, and it writes to separate `_fast_run`
+folders, so it never mixes with a real run.
 
 ## Reproducibility
 

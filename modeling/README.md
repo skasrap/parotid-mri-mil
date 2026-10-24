@@ -57,7 +57,9 @@ sequence sets), `extended` and `promote` (further sequence combinations at step 
 for a better one), `repeat-cv` (the step-4 models on four more fold splits; the warm-start
 chain is retrained for each split so no checkpoint has seen its validation fold).
 
-`--fast-run` uses a subsample of 8 patients per diagnosis, 2 folds and 2 epochs.
+`--fast-run` uses a subsample of 8 patients per diagnosis, 2 folds and 2 epochs, and writes to
+`<work_dir>_fast_run` and `<results_dir>_fast_run` instead of the real folders. Use
+`evaluate.py --fast-run` to evaluate such a run.
 
 ### Choices worth knowing
 
